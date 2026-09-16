@@ -6,5 +6,6 @@
 
 int main()
 {
-    const pokedex * pokedex = pokedex::get_instance("pokedex.csv");
+    const pokedex * pokedex = pokedex::get_instance("data/pokedex.csv");
+    pokedex->display();
 }

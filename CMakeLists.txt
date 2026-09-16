@@ -1,9 +1,7 @@
-cmake_minimum_required(VERSION 4.3)
+cmake_minimum_required(VERSION 3.27)
 project(TP)
 
 set(CMAKE_CXX_STANDARD 20)
-
-find_package(SFML 3 COMPONENTS Graphics Window System REQUIRED)
 
 add_executable(TP src/main.cpp
         src/pokemon.cpp
@@ -12,16 +10,4 @@ add_executable(TP src/main.cpp
         inc/pokemon_vector.h
         src/pokedex.cpp
         inc/pokedex.h
-)
-
-target_link_libraries(TP PRIVATE
-        SFML::Graphics
-        SFML::Window
-        SFML::System
-)
-
-configure_file(
-        ${CMAKE_SOURCE_DIR}/data/pokedex.csv
-        ${CMAKE_BINARY_DIR}/pokedex.csv
-        COPYONLY
 )
