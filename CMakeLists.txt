@@ -11,6 +11,10 @@ add_executable(TP
         src/pokedex.cpp
         src/pokemon_party.cpp
         inc/pokemon_party.h
+        src/pokemon_attack.cpp
+        inc/pokemon_attack.h
 )
 
 target_include_directories(TP PRIVATE inc)
+
+target_compile_definitions(TP PRIVATE DATA_DIR="${CMAKE_SOURCE_DIR}/data")

@@ -24,6 +24,7 @@ protected:
     std::vector<std::unique_ptr<pokemon>> list_of_pokemon;
 
     void add_pokemon(std::unique_ptr<pokemon> p);
+    void insert_pokemon(std::size_t position, std::unique_ptr<pokemon> p);
     [[nodiscard]] std::unique_ptr<pokemon> extract_pokemon(std::size_t index);
     [[nodiscard]] pokemon& get_by_index(std::size_t index);
     [[nodiscard]] const pokemon& get_by_index(std::size_t index) const;
