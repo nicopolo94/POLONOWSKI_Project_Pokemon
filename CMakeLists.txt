@@ -9,6 +9,8 @@ add_executable(TP
         src/pokemon.cpp
         src/pokemon_vector.cpp
         src/pokedex.cpp
+        src/pokemon_party.cpp
+        inc/pokemon_party.h
 )
 
 target_include_directories(TP PRIVATE inc)

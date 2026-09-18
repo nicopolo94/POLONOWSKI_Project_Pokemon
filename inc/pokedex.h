@@ -13,19 +13,25 @@
 #define TP_POKEDEX_H
 
 #include "pokemon_vector.h"
-#include "pokemon.h"
 
+#include <cstddef>
+#include <memory>
 #include <string>
-using std::string;
 
 class pokedex : public pokemon_vector {
 private:
-    static pokedex* pokedex_instance;
-protected:
     explicit pokedex(const string& file_name);
+
 public:
-    static pokedex* get_instance(const string& file_name);
-    pokemon* copy_pokemon(const string& pokemon_name);
+    pokedex(const pokedex&) = delete;
+    pokedex& operator=(const pokedex&) = delete;
+
+    // The file name is only used on the first call, when the Pokedex is built.
+    static pokedex& get_instance(const string& file_name);
+
+    [[nodiscard]] std::unique_ptr<pokemon> copy_pokemon(const string& pokemon_name) const;
+    [[nodiscard]] std::unique_ptr<pokemon> copy_pokemon(std::size_t index) const;
 };
 
 #endif //TP_POKEDEX_H
+
