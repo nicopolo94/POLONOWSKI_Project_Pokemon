@@ -1,13 +1,14 @@
-cmake_minimum_required(VERSION 3.27)
+cmake_minimum_required(VERSION 3.21)
 project(TP)
 
 set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-add_executable(TP src/main.cpp
+add_executable(TP
+        src/main.cpp
         src/pokemon.cpp
-        inc/pokemon.h
         src/pokemon_vector.cpp
-        inc/pokemon_vector.h
         src/pokedex.cpp
-        inc/pokedex.h
 )
+
+target_include_directories(TP PRIVATE inc)
