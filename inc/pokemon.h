@@ -24,10 +24,14 @@ using std::string;
 
 class pokemon {
 private:
+    // id is unique per instance (two Pikachu get two ids); number is the Pokedex number shared by
+    // every copy and by alternate forms (Mega evolutions have the same number as their base form).
     const int id;
+    const int number;
     const string name;
     const string type_1;
     const string type_2;
+    int evolution;
     double hitPointsMax;
     double hitPoints;
     double attack;
@@ -37,34 +41,37 @@ private:
     double speed;
     const int generation;
     const bool legendary;
-public:
-    // The global nextId give each pokemon an unique ID.
+
     static int nextId;
 
-    // Constructors for pokemon
+public:
     pokemon() = delete;
     pokemon(
+        int number,
         const string& name,
         const string& type_1,
         const string& type_2,
-        const double& hitPointsMax,
-        const double& attack,
-        const double& defense,
-        const double& sp_attack,
-        const double& sp_defense,
-        const double& speed,
-        const int& generation,
-        const bool& legendary
+        double hitPointsMax,
+        double attack,
+        double defense,
+        double sp_attack,
+        double sp_defense,
+        double speed,
+        int generation,
+        bool legendary,
+        int evolution = 0
     );
+    // A copy is a new individual: it gets its own id and starts with full hit points.
     pokemon(const pokemon& copiedPokemon);
-
+    pokemon& operator=(const pokemon&) = delete;
     ~pokemon();
 
-    // Getters
     [[nodiscard]] int getId() const;
-    [[nodiscard]] string getName() const;
-    [[nodiscard]] string getType1() const;
-    [[nodiscard]] string getType2() const;
+    [[nodiscard]] int getNumber() const;
+    [[nodiscard]] const string& getName() const;
+    [[nodiscard]] const string& getType1() const;
+    [[nodiscard]] const string& getType2() const;
+    [[nodiscard]] int getEvolution() const;
     [[nodiscard]] double getHitPointsMax() const;
     [[nodiscard]] double getHitPoints() const;
     [[nodiscard]] double getAttack() const;
@@ -73,12 +80,13 @@ public:
     [[nodiscard]] double getSpDefense() const;
     [[nodiscard]] double getSpeed() const;
     [[nodiscard]] int getGeneration() const;
-    [[nodiscard]] bool getLegendary() const;
+    [[nodiscard]] bool isLegendary() const;
+    [[nodiscard]] bool isKnockedOut() const;
 
-    // Methods for pokemon
     void displayName() const;
     void displayInfo() const;
     void takeDamage(double damage);
+    void heal();
     void attackAnotherPokemon(pokemon& anotherPokemon) const;
 };
 
