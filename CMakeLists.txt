@@ -18,3 +18,12 @@ add_executable(TP
 target_include_directories(TP PRIVATE inc)
 
 target_compile_definitions(TP PRIVATE DATA_DIR="${CMAKE_SOURCE_DIR}/data")
+
+find_package(SFML 3 COMPONENTS Graphics Window System REQUIRED)
+
+target_link_libraries(TP
+        PRIVATE
+        SFML::Graphics
+        SFML::Window
+        SFML::System
+)

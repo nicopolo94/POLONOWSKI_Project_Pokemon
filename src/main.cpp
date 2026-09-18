@@ -1,6 +1,7 @@
 #include "pokedex.h"
 #include "pokemon_party.h"
 
+#include <SFML/Graphics.hpp>
 #include <exception>
 #include <iostream>
 #include <string>
