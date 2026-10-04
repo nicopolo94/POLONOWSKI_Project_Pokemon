@@ -14,6 +14,9 @@ add_executable(TP
         src/texture_cache.cpp
         src/selection_layout.cpp
         src/selection_screen.cpp
+        inc/game_state.h
+        inc/game_engine.h
+        src/game_engine.cpp
 )
 
 target_include_directories(TP PRIVATE inc)
