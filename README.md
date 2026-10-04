@@ -3,54 +3,44 @@
 
 ___
 
-Le but de ce projet est de concevoir un jeu Pokémon simple.
+Le but de ce projet est de concevoir un jeu Pokémon simple en C++, doté d'une interface graphique interactive.
 
-### Lancement du projet ###
+### Lancement du projet (Linux / WSL)
+
+Le projet utilise **SFML 2**. Sous un environnement Linux ou WSL (Windows Subsystem for Linux), vous devez d'abord installer la bibliothèque graphique :
+```shell
+$ sudo apt-get update
+$ sudo apt-get install libsfml-dev
+```
 
 Pour compiler et lancer le projet :
 ```shell
 $ cmake -B build
 $ cmake --build build
-$ build/TP
+$ ./build/TP
 ```
 
-Le chemin du dossier `data` est transmis au code par CMake (`DATA_DIR`) sous forme de chemin absolu. Le programme trouve donc `pokedex.csv` quel que soit le dossier depuis lequel il est lancé.
+*Note : Le chemin du dossier `data` est transmis automatiquement au code par CMake (`DATA_DIR`). Le programme trouvera les images et le `pokedex.csv` quel que soit le dossier de lancement.*
 
-### Structure du projet ###
+### Architecture
 
-~~~
-TP
-|- data
-|   |- pokemon -> images des pokemons
-|   |- pokedex.csv -> liste des pokemons
-|- inc
-|   |- pokemon.h
-|   |- pokemon_vector.h
-|   |- pokedex.h
-|   |- pokemon_party.h
-|   |- pokemon_attack.h
-|- src
-|   |- main.cpp
-|   |- pokemon.cpp -> définition d'un pokemon
-|   |- pokemon_vector.cpp -> classe abstraite d'une liste de pokemons
-|   |- pokedex.cpp -> singleton contenant tous les pokemons, créé à partir de pokedex.csv
-|   |- pokemon_party.cpp -> l'ensemble des pokemons du joueur
-|   |- pokemon_attack.cpp -> l'équipe de combat, 6 pokemons au maximum
-|- CMakeLists.txt
-~~~
+#### 1. Moteur de Jeu (Design Pattern : STATE)
+Le jeu utilise le patron de conception **State** pour gérer les différents écrans de manière propre :
+- `game_engine` : Le chef d'orchestre (Contexte). Il gère la fenêtre SFML, la mémoire cache des textures, et possède les listes de Pokémon du joueur.
+- `game_state` : L'interface abstraite que chaque écran doit respecter.
+- **Les États actuels** : `state_title` (Écran d'accueil), `state_exploration` (Écran principal), `state_team_selection` (Écran de choix d'équipe), `state_combat` (Écran de combat) et `state_game_over` (Écran de game over)
 
-### Les classes ###
+#### 2. Interface Graphique (SFML)
+- `texture_cache` : Charge les images dynamiquement et les garde en mémoire pour éviter les ralentissements.
+- `selection_layout` & `selection_screen` : Gèrent la grille cliquable pour transférer les Pokémon de la réserve (`pokemon_party`) vers l'équipe d'attaque (`pokemon_attack`).
 
-`pokemon` représente un individu. Il possède un ID unique, attribué à chaque création (copies comprises), et son numéro de Pokédex, commun à tous les pokemons de la même espèce. Copier un pokemon crée donc un nouvel individu, avec un nouvel ID et tous ses points de vie.
+#### 3. Logique Métier (Classes de base)
+- `pokemon` : Représente un individu (ID unique, stats, points de vie).
+- `pokemon_vector` : Classe abstraite commune à toutes les listes de Pokémon (gestion sécurisée de la mémoire via `std::unique_ptr`).
+- `pokedex` : Singleton lisant `pokedex.csv` (usine à Pokémon en lecture seule).
+- `pokemon_party` : La réserve illimitée du joueur.
+- `pokemon_attack` : L'équipe envoyée au combat (6 Pokémon maximum).
 
-`pokemon_vector` est la classe abstraite commune à toutes les listes de pokemons. Chaque liste possède ses pokemons (via `std::unique_ptr`) : un pokemon n'est jamais dans deux listes à la fois, et la mémoire est libérée automatiquement. Les méthodes d'accès sont protégées, et chaque classe fille choisit celles qu'elle rend publiques.
-
-`pokedex` est un singleton qui lit `pokedex.csv` à sa première utilisation. Ses pokemons ne peuvent être ni modifiés ni retirés : on obtient un pokemon uniquement en demandant une copie avec `copy_pokemon`, par nom ou par index.
-
-`pokemon_party` contient tous les pokemons du joueur, sans limite de taille. On peut y ajouter un pokemon (à la fin ou à une position choisie), y accéder et l'en retirer.
-
-`pokemon_attack` est l'équipe envoyée au combat, limitée à 6 pokemons. Les pokemons sont déplacés depuis la party, un par un ou par sélection de plusieurs index, puis rendus à la party, à la fin ou à la position choisie par le joueur. Une sélection invalide (index inexistant, doublon, équipe trop grande) est refusée avant tout déplacement, donc la party et l'équipe restent intactes.
-
-### Règle d'attaque ###
+### Règle d'attaque
 
 Un pokemon inflige `attaque - défense adverse` points de dégâts. Si ce nombre est nul ou négatif, l'attaque n'a aucun effet. Un pokemon dont les points de vie tombent à 0 est K.O., et une équipe est vaincue quand tous ses pokemons sont K.O.
