@@ -1,39 +1,42 @@
 #include "pokedex.h"
 #include "pokemon_party.h"
-
-#include <SFML/Graphics.hpp>
-#include <exception>
+#include "pokemon_attack.h"
+#include "selection_screen.h"
 #include <iostream>
-#include <string>
+
+#ifndef DATA_DIR
+#define DATA_DIR "./data"
+#endif
 
 int main() {
     try {
-        // Named rather than a literal: GCC flags a reference returned from a call that received a
-        // temporary string as possibly dangling, even though the singleton outlives it.
-        const std::string pokedex_path = std::string(DATA_DIR) + "/pokedex.csv";
-        const pokedex& dex = pokedex::get_instance(pokedex_path);
-        std::cout << dex.size() << " pokemon in the Pokedex" << std::endl;
+        // 1. Initialise le Pokedex
+        const std::string csv_path = std::string(DATA_DIR) + "/pokedex.csv";
+        const pokedex& dex = pokedex::get_instance(csv_path);
 
+        // 2. Initialise la party (La réserve de Pokémon du joueur)
         pokemon_party party;
-        party.add_pokemon(dex.copy_pokemon("Pikachu"));
-        party.add_pokemon(dex.copy_pokemon("Bulbasaur"));
-        party.add_pokemon(dex.copy_pokemon("Pikachu"));
 
-        std::cout << "\nParty :" << std::endl;
-        party.display();
+        // On copie par exemple les 25 premiers Pokémon existants dans la party
+        for (std::size_t i = 1; i <= 25; ++i) {
+            try {
+                party.add_pokemon(dex.copy_pokemon(i));
+            } catch (...) {
+                // Ignore silencieusement si un index n'a pas pu être instancié
+            }
+        }
 
-        party.get_by_index(0).attackAnotherPokemon(party.get_by_index(1));
+        // 3. Initialise l'équipe d'attaque
+        pokemon_attack attack;
 
-        const std::unique_ptr<pokemon> extracted = party.extract_pokemon("Bulbasaur");
-        std::cout << "\nExtracted :" << std::endl;
-        extracted->displayInfo();
+        // 4. Lance l'interface graphique SFML de sélection
+        selection_screen screen(party, attack);
+        screen.run();
 
-        std::cout << "\nParty after extraction :" << std::endl;
-        party.display();
-    }
-    catch (const std::exception& e) {
-        std::cerr << "Error : " << e.what() << std::endl;
+    } catch (const std::exception& e) {
+        std::cerr << "Erreur fatale : " << e.what() << '\n';
         return 1;
     }
+
     return 0;
 }

@@ -10,20 +10,25 @@ add_executable(TP
         src/pokemon_vector.cpp
         src/pokedex.cpp
         src/pokemon_party.cpp
-        inc/pokemon_party.h
         src/pokemon_attack.cpp
-        inc/pokemon_attack.h
+        src/texture_cache.cpp
+        src/selection_layout.cpp
+        src/selection_screen.cpp
 )
 
 target_include_directories(TP PRIVATE inc)
-
 target_compile_definitions(TP PRIVATE DATA_DIR="${CMAKE_SOURCE_DIR}/data")
 
-find_package(SFML 3 COMPONENTS Graphics Window System REQUIRED)
+# Cherche le SFML 2 que tu viens d'installer via apt-get
+find_package(SFML 2 COMPONENTS graphics window system REQUIRED)
 
+# On utilise les noms en minuscules pour la version Linux de SFML 2
 target_link_libraries(TP
         PRIVATE
-        SFML::Graphics
-        SFML::Window
-        SFML::System
+        sfml-graphics
+        sfml-window
+        sfml-system
 )
+
+target_compile_options(TP PUBLIC -Wall -Wextra -Wpedantic)
+target_compile_definitions(TP PUBLIC DATA_DIR="${CMAKE_SOURCE_DIR}/data")
