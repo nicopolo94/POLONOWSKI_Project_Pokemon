@@ -1,7 +1,6 @@
 #include "pokedex.h"
-#include "pokemon_party.h"
-#include "pokemon_attack.h"
-#include "selection_screen.h"
+#include "game_engine.h"
+#include "state_title.h"
 #include <iostream>
 
 #ifndef DATA_DIR
@@ -10,28 +9,24 @@
 
 int main() {
     try {
-        // 1. Initialise le Pokedex
+        // Initialise le Pokedex
         const std::string csv_path = std::string(DATA_DIR) + "/pokedex.csv";
         const pokedex& dex = pokedex::get_instance(csv_path);
 
-        // 2. Initialise la party (La réserve de Pokémon du joueur)
-        pokemon_party party;
+        // Crée le contexte global (la machine à états)
+        game_engine engine;
 
-        // On copie par exemple les 25 premiers Pokémon existants dans la party
+        // On donne quelques Pokémon de base au joueur
         for (std::size_t i = 1; i <= 25; ++i) {
-            try {
-                party.add_pokemon(dex.copy_pokemon(i));
-            } catch (...) {
-                // Ignore silencieusement si un index n'a pas pu être instancié
-            }
+            try { engine.party.add_pokemon(dex.copy_pokemon(i)); }
+            catch (...) {}
         }
 
-        // 3. Initialise l'équipe d'attaque
-        pokemon_attack attack;
+        // On démarre la machine avec l'écran d'accueil
+        engine.change_state(std::make_unique<state_title>(&engine));
 
-        // 4. Lance l'interface graphique SFML de sélection
-        selection_screen screen(party, attack);
-        screen.run();
+        // Lance la boucle infinie du jeu (tourne jusqu'à la fermeture)
+        engine.run();
 
     } catch (const std::exception& e) {
         std::cerr << "Erreur fatale : " << e.what() << '\n';

@@ -17,6 +17,10 @@ add_executable(TP
         inc/game_state.h
         inc/game_engine.h
         src/game_engine.cpp
+        inc/state_title.h
+        src/state_title.cpp
+        inc/state_exploration.h
+        src/state_exploration.cpp
 )
 
 target_include_directories(TP PRIVATE inc)
