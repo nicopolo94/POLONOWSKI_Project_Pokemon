@@ -4,6 +4,8 @@
 
 #include "state_exploration.h"
 #include "game_engine.h"
+#include "state_team_selection.h"
+#include "state_combat.h"
 
 state_exploration::state_exploration(game_engine* engine) : game_state(engine) {
     if (!font.loadFromFile("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf")) {}
@@ -20,13 +22,14 @@ state_exploration::state_exploration(game_engine* engine) : game_state(engine) {
 void state_exploration::handle_event(const sf::Event& event) {
     if (event.type == sf::Event::KeyPressed) {
         if (event.key.code == sf::Keyboard::T) {
-            // TODO (Prochain commit) : Aller vers l'écran de sélection de la partie 1.3
+            // Passe à l'écran de gestion de l'équipe
+            engine->change_state(std::make_unique<state_team_selection>(engine));
         } else if (event.key.code == sf::Keyboard::E) {
-            // TODO (Prochain commit) : Aller vers un combat
+            // Passe à l'écran de combat
+            engine->change_state(std::make_unique<state_combat>(engine));
         }
     }
 }
-
 void state_exploration::update() {}
 
 void state_exploration::draw(sf::RenderWindow& window) {

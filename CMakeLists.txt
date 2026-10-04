@@ -21,6 +21,12 @@ add_executable(TP
         src/state_title.cpp
         inc/state_exploration.h
         src/state_exploration.cpp
+        inc/state_team_selection.h
+        src/state_team_selection.cpp
+        inc/state_combat.h
+        src/state_combat.cpp
+        inc/state_game_over.h
+        src/state_game_over.cpp
 )
 
 target_include_directories(TP PRIVATE inc)
